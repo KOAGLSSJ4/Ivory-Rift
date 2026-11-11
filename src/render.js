@@ -8,12 +8,13 @@ import { M, TX, initMaterials } from './mats.js';
 import { buildDragon, poseDragon } from './dragon.js';
 import { buildStruct, buildEntity, poseEntity, setFlash } from './models.js';
 import * as FX from './fx.js';
+import { HERO, loadHero, poseHero, heroHand } from './hero.js';
 import { clamp, lerp, damp, dampAng, smooth, rand, TAU } from './util.js';
 const T = window.THREE;
 
 export const R = {
   style: 'real', renderer: null, scene: null, cam: null, pcam: null, ocam: null, w: 1, h: 1, t: 0,
-  views: new Map(), dragon: null, occ: [], named: {}, spinners: [], focus: new T.Vector3(20, 0, 44), zoom: 1,
+  views: new Map(), dragon: null, occ: [], named: {}, spinners: [], focus: new T.Vector3(20, 0, 44), zoom: 0.8,
   camPos: new T.Vector3(30, 12, 60), camLook: new T.Vector3(20, 1, 44), fov: 38, post: { flash: 0, hurt: 0, desat: 0, fade: 0 },
   quality: 1, lastPose: null, shakeV: new T.Vector3(), lowW: 480, lowH: 270, pxScale: 3, stepT: 0, ready: false, frameMs: 16,
 };
@@ -74,6 +75,7 @@ export function init(canvas) {
   buildWorld(sc);
   R.dragon = buildDragon(); sc.add(R.dragon.root);
   R.dragon.root.traverse((o) => { if (o.isMesh) o.userData.m0 = o.material; });
+  loadHero(R.dragon.root, () => { R.dragon.body.visible = false; });
   FX.init(sc, R);
 
   // ---- post-processing chain
@@ -216,7 +218,7 @@ export function pickAim(mx, my) {
 const sv = new T.Vector3();
 export function screenPos(x, y, z) { sv.set(x, y, z).project(R.cam); return { x: (sv.x * 0.5 + 0.5) * R.w, y: (-sv.y * 0.5 + 0.5) * R.h, on: sv.z < 1 && sv.z > -1 && Math.abs(sv.x) < 1.05 && Math.abs(sv.y) < 1.05, behind: sv.z > 1 }; }
 const hv = new T.Vector3();
-R.handPos = (side) => { const a = side === 'R' ? R.dragon.armR : R.dragon.armL; a.hand.getWorldPosition(hv); hv.y -= 0.12; return hv; };
+R.handPos = (side) => { const h = HERO.ready && heroHand(side); if (h) return h; const a = side === 'R' ? R.dragon.armR : R.dragon.armL; a.hand.getWorldPosition(hv); hv.y -= 0.12; return hv; };
 
 // ---------------- the frame ----------------
 export function frame(dt, rdt) {
@@ -288,6 +290,7 @@ export function frame(dt, rdt) {
         atk: A.step >= 0 ? { step: A.step, k: clamp(A.t / A.dur, 0, 1) } : null };
       poseDragon(d, pose, t); R.lastPose = pose;
     }
+    poseHero(p, px ? (stepTick ? 0.085 : 0) : rdt, t);
     R.dragonView = R.dragonView || { g: d.root }; setFlash(R.dragonView, p.hurtT > 0.22);
     const eye = M.eye; eye.emissiveIntensity = p.powerless ? 0.15 : 5 + p.a.rewrite * 14 + p.a.beam * 3; eye.emissive.setHex(p.powerless ? 0x8a8a8a : 0xffa21a);
   }
@@ -298,7 +301,7 @@ export function frame(dt, rdt) {
     let v = R.views.get(e.id); if (!v) { v = buildEntity(e); R.views.set(e.id, v); R.scene.add(v.g); }
     seen.add(e.id);
     const g = v.g; g.visible = !e.hidden;
-    if (e.ride && p) { const sx = Math.sin(p.yaw), cz = Math.cos(p.yaw); g.position.set(p.x + cz * 0.98, p.y + R.dragon.body.position.y + 1.42, p.z - sx * 0.98); g.rotation.set(0, p.yaw, 0); e.act = 'sit'; }
+    if (e.ride && p) { const sx = Math.sin(p.yaw), cz = Math.cos(p.yaw); const rs = HERO.ready ? 0.62 : 0.98, ry = HERO.ready ? 2.18 : R.dragon.body.position.y + 1.42; g.position.set(p.x + cz * rs, p.y + ry, p.z - sx * rs); g.rotation.set(0, p.yaw, 0); e.act = 'sit'; }
     else {
       g.position.set(e.x, e.y || 0, e.z);
       const snapYaw = px && (e.kind === 'npc' || e.team === 'legion') && e.kind !== 'drone';

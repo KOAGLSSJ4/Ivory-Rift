@@ -24,7 +24,8 @@ Touch controls appear automatically on phones and tablets.
 `test/play.mjs` drives the game headlessly through Playwright (see `test/helpers.js`).
 
 ## Known limits
-- The dragon and every other model are procedural (code-built primitives). A sculpted, rigged model made from the
-  reference images is the single biggest visual upgrade available; `src/dragon.js` is the only file it replaces.
+- Vellum is `assets/IvoryDragon.glb` (rigged, with Idle, Walk and Cast clips), loaded by `src/hero.js`. Claw and tail
+  attacks have no clips yet: they are layered procedurally on the chest and arm bones.
+- Every other model (townsfolk, soldiers, the Reckoner, buildings, props) is still procedural, built in `src/models.js`.
 - Title art and Vellum's dialogue portrait are David's reference image, embedded as base64 (`art_*.b64`).
 - Tested by scripted playthrough in headless Chromium. Not yet tuned by a human hand on real hardware.

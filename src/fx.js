@@ -200,7 +200,7 @@ function slash(ev) {
 
 function blinkFx(ev) {
   const g = ghosts.find((q) => q.t >= q.dur) || ghosts[0];
-  g.t = 0; g.dur = 0.42; g.d.root.position.set(ev.x0, ev.y0, ev.z0); g.d.root.rotation.y = R.dragon.root.rotation.y; g.d.root.visible = state.ghostsOn;
+  g.t = 0; g.dur = 0.42; g.d.root.scale.setScalar(0.92); g.d.root.position.set(ev.x0, ev.y0, ev.z0); g.d.root.rotation.y = R.dragon.root.rotation.y; g.d.root.visible = state.ghostsOn;
   poseDragon(g.d, R.lastPose || {}, R.t);
   const dx = ev.x1 - ev.x0, dy = ev.y1 - ev.y0, dz = ev.z1 - ev.z0, len = Math.hypot(dx, dy, dz);
   const m = new T.Mesh(GEO.cyl, addMat(AMBER_HOT, 7)); m.position.set((ev.x0 + ev.x1) / 2, (ev.y0 + ev.y1) / 2 + 1.5, (ev.z0 + ev.z1) / 2);

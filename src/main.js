@@ -1,4 +1,5 @@
 // main.js — boot, the frame loop, pause, style switching, checkpoints.
+import './three-global.js';
 import { G, isEnemy, updateEntities } from './sim.js';
 import { I, initInput, poll, endFrame } from './input.js';
 import { R, init as initRender, frame, setStyle, resize, pickAim, setMood } from './render.js';
