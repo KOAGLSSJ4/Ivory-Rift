@@ -1,5 +1,5 @@
 // actors.js — entity and structure views built from the GLB pack. Returns null when a model is missing, so the procedural version is used.
-import { A, has, fitted, mixerFor, playClip, bone, inst } from './assets.js';
+import { A, has, fitted, mixerFor, playClip, bone, inst, BAKED } from './assets.js';
 import { clamp } from './util.js';
 const T = window.THREE;
 
@@ -9,7 +9,7 @@ const PROP = {   // kind: [model, fit, extra]
   pod: ['ShelterPod', { h: 2.3 }], shield: ['TowerShield', { d: 2.05, rx: -Math.PI / 2 }], tick: ['ScrapTick', { w: 0.9 }], drone: ['SeekerDrone', { w: 1.05, centre: true }],
   stake: ['WardStake', { h: 4.3 }], crest: ['MandateCrest', { h: 1.25, centre: true }], page: ['LostPage', { w: 0.6, rx: Math.PI / 2 }], nest: ['TickNest', { w: 3.3 }],
 };
-function tint(root, hex) { const c = new T.Color(hex); root.traverse((o) => { if (o.isMesh) { o.material = o.material.clone(); o.material.color.multiply(c); o.userData.m0 = o.material; } }); }
+function tint(root, hex) { const c = new T.Color(hex); root.traverse((o) => { if (o.isMesh) { o.material = o.material.clone(); o.material.userData = { ...o.material.userData }; o.material.color.multiply(c); if (o.material.userData.baked) { o.material.emissive.copy(c); BAKED.push(o.material); } o.userData.m0 = o.material; } }); }
 function attach(root, model, opt, ...bones) { const b = bone(root, ...bones); if (!b) return null; const w = inst(model); if (!w) return null; const k = 1 / (root.parent ? root.parent.scale.y : 1); w.scale.setScalar(k * (opt.s || 1)); if (opt.r) w.rotation.set(...opt.r); if (opt.p) w.position.set(...opt.p); b.add(w); return w; }
 
 export function modelView(e) {

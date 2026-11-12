@@ -42,11 +42,13 @@ export function poseHero(p, dt, t) {
   wWalk = damp(wWalk, clamp(a.run * 1.3, 0, 1), 12, dt); wOver = damp(wOver, want ? 1 : 0, 14, dt);
   const loco = 1 - wOver * 0.9;
   act.Idle.setEffectiveWeight((1 - wWalk) * loco); act.Walk.setEffectiveWeight(wWalk * loco); act.Walk.timeScale = 0.6 + a.run * 1.5;
+  if (HERO.headBase) HERO.bones.Head.quaternion.copy(HERO.headBase);     // undo last frame's look twist before the clips write
   HERO.an.mixer.update(dt);
   const s = HERO.scene, B = HERO.bones;
+  if (B.Head) (HERO.headBase || (HERO.headBase = new T.Quaternion())).copy(B.Head.quaternion);
   s.position.y = a.rewrite * 0.5;
   if (B.Head && !want) { q.setFromAxisAngle(ax, clamp(a.headYaw, -1, 1) * 0.5); B.Head.quaternion.multiply(q); }
-  if (HERO.mesh) for (const m of Array.isArray(HERO.mesh.material) ? HERO.mesh.material : [HERO.mesh.material]) if (m !== HERO.eyes && m.color) m.color.setScalar(p.powerless ? 0.55 : 1);
+  if (HERO.mesh) for (const m of Array.isArray(HERO.mesh.material) ? HERO.mesh.material : [HERO.mesh.material]) if (m !== HERO.eyes && m.color) m.color.setScalar(p.powerless ? 0.5 : 0.8);
   if (HERO.eyes) { HERO.eyes.emissive.setHex(p.powerless ? 0x555555 : 0xffa21a); HERO.eyes.emissiveIntensity = p.powerless ? 0.2 : 3 + a.rewrite * 12 + a.beam * 3 + Math.sin(t * 3) * 0.4; }
 }
 const hv = new T.Vector3();

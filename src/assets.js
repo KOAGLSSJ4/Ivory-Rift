@@ -2,7 +2,8 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as skinClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 const T = window.THREE;
-export const A = {};   // name -> { scene, clips, skinned }
+export const A = {};
+export const BAKED = [];   // photographic atlases with lighting painted in: shown mostly as painted, lit only gently   // name -> { scene, clips, skinned }
 export const NAMES = ['IvoryDragon', 'Pip', 'Mara', 'Tobe', 'Townsperson', 'ChildTownsperson', 'Soldier', 'Bailiff', 'Vasht', 'Blade', 'Lance', 'TowerShield',
   'HangarNine', 'WorkshopShed', 'WaterTower', 'Well', 'HouseA', 'HouseB', 'ControlTower', 'MarketStall', 'StreetLamp', 'ShippingContainer', 'WreckedFuselage', 'ScrapHeap',
   'GlassCrater', 'CrashedPod', 'DeadTree', 'BlossomingTree', 'CanalBridge', 'WindSpinner', 'FlatbedTruck', 'EngineBlock', 'Crate', 'OilDrum', 'SteelGirder', 'AircraftPanel',
@@ -20,7 +21,8 @@ export async function loadAll(onProgress) {
       }
       const gltf = await new Promise((ok, bad) => loader.parse(buf, '', ok, bad));
       let skinned = false;
-      gltf.scene.traverse((o) => { if (o.isSkinnedMesh) skinned = true; if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.isSkinnedMesh) o.frustumCulled = false; const m = o.material; if (m.map) m.map.anisotropy = 8; m.envMapIntensity = 1.0; } });
+      gltf.scene.traverse((o) => { if (o.isSkinnedMesh) skinned = true; if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.isSkinnedMesh) o.frustumCulled = false; const m = o.material; if (m.map) m.map.anisotropy = 8; m.envMapIntensity = 1.0;
+        if (o.isSkinnedMesh) for (const mm of Array.isArray(m) ? m : [m]) if (mm.map && !/eye/i.test(mm.name) && !BAKED.includes(mm)) { mm.emissiveMap = mm.map; mm.emissive.setHex(0xffffff); mm.emissiveIntensity = 0.5; mm.userData.baked = name === 'IvoryDragon' ? 0.3 : 0.62; mm.color.setScalar(name === 'IvoryDragon' ? 0.8 : 0.7); BAKED.push(mm); } } });
       A[name] = { scene: gltf.scene, clips: gltf.animations, skinned };
     } catch (e) { console.warn('asset not loaded:', name, e && e.message); }
     done++; if (onProgress) onProgress(done / NAMES.length);

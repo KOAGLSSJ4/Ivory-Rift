@@ -9,6 +9,7 @@ import { buildDragon, poseDragon } from './dragon.js';
 import { buildStruct, buildEntity, poseEntity, setFlash } from './models.js';
 import * as FX from './fx.js';
 import { HERO, loadHero, poseHero, heroHand } from './hero.js';
+import { BAKED } from './assets.js';
 import { clamp, lerp, damp, dampAng, smooth, rand, TAU } from './util.js';
 const T = window.THREE;
 
@@ -237,6 +238,7 @@ export function frame(dt, rdt) {
   if (R.shafts) for (const m of R.shafts) m.opacity = (px ? 0 : 0.055) * cur.shafts;
   if (R.arc) R.arc.material.opacity = 0.5 * clamp(cur.sunI / 3, 0.2, 1);
   for (const s of R.spinners) s.rotation.z += dt * 1.4;
+  { const lvl = clamp((cur.sunI + cur.hemiI * 1.5) / 4.6, 0.35, 1) * (px ? 0.8 : 1); for (const m of BAKED) m.emissiveIntensity = m.userData.baked * lvl; }
 
   // ---- camera
   const cine = G.cine;
