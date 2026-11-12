@@ -1,54 +1,53 @@
-// hero.js — Vellum's real body: the rigged IvoryDragon.glb, driven by the same simulation state as before.
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+// hero.js — Vellum's body: the rigged IvoryDragon.glb and its clips, driven by the simulation state.
+import { A, mixerFor } from './assets.js';
 import { clamp, damp } from './util.js';
 const T = window.THREE;
-export const HERO = { ready: false, scene: null, mixer: null, act: {}, bones: {}, mesh: null, scale: 1.2, w: { idle: 1, walk: 0, cast: 0 }, castOn: false };
+export const HERO = { ready: false, scene: null, an: null, bones: {}, mesh: null, eyes: null, scale: 1.2, cur: '', lock: 0 };
 
-export function loadHero(parent, onReady) {
-  const el = document.getElementById('glb'); if (!el) return;
-  let buf;
-  try { const bin = atob(el.textContent.trim()); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); buf = u8.buffer; } catch (e) { console.warn('hero model missing', e); return; }
-  new GLTFLoader().parse(buf, '', (gltf) => {
-    const s = gltf.scene; s.scale.setScalar(HERO.scale);
-    s.traverse((o) => {
-      if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; o.userData.m0 = o.material; o.material.envMapIntensity = 0.7; HERO.mesh = o; if (o.material.map) o.material.map.anisotropy = 8; }
-      if (o.isBone) HERO.bones[o.name.replace('.', '')] = o;     // three strips dots from node names: Hand.R → HandR
-    });
-    HERO.scene = s; HERO.mixer = new T.AnimationMixer(s);
-    for (const clip of gltf.animations) { const a = HERO.mixer.clipAction(clip); HERO.act[clip.name] = a; a.play(); a.setEffectiveWeight(clip.name === 'Idle' ? 1 : 0); }
-    if (HERO.act.Cast) { HERO.act.Cast.setLoop(T.LoopOnce, 1); HERO.act.Cast.clampWhenFinished = true; }
-    parent.add(s); HERO.ready = true; if (onReady) onReady();
-  }, (e) => console.warn('hero model failed to load', e));
+export function loadHero(parent) {
+  const a = A.IvoryDragon; if (!a) return false;
+  const s = a.scene; s.scale.setScalar(HERO.scale);
+  s.traverse((o) => {
+    if (o.isMesh) { o.userData.m0 = o.material; HERO.mesh = o; for (const m of Array.isArray(o.material) ? o.material : [o.material]) if (/eye/i.test(m.name)) HERO.eyes = m; }
+    if (o.isBone) HERO.bones[o.name.replace('.', '')] = o;
+  });
+  HERO.scene = s; HERO.an = mixerFor('IvoryDragon', s); parent.add(s); HERO.ready = true;
+  for (const n of ['Idle', 'Walk']) { HERO.an.act[n].play(); HERO.an.act[n].setEffectiveWeight(n === 'Idle' ? 1 : 0); }
+  for (const n of ['Cast', 'ClawR', 'ClawL', 'TailSpin', 'Hit', 'Kneel', 'AimHold']) { const c = HERO.an.act[n]; if (c) { c.setLoop(T.LoopOnce, 1); c.clampWhenFinished = true; } }
+  return true;
 }
-
+// one overlay clip at a time sits on top of Idle/Walk
+function overlay(name, fade = 0.1) {
+  const H = HERO, act = H.an.act; if (H.cur === name) return;
+  if (H.cur && act[H.cur]) act[H.cur].fadeOut(name ? fade : 0.22);
+  if (name && act[name]) { act[name].reset().setEffectiveWeight(1).fadeIn(fade).play(); }
+  H.cur = name;
+}
 const q = new T.Quaternion(), ax = new T.Vector3(0, 1, 0);
-// p: player state; dt: animation time step; spin: tail-sweep rotation
+let lastStep = -1, wWalk = 0, wOver = 0;
 export function poseHero(p, dt, t) {
   if (!HERO.ready) return;
-  const A = HERO.act, w = HERO.w, a = p.a;
-  const casting = Math.max(a.beam, a.charge, a.tk, a.rewrite) > 0.25;
-  w.walk = damp(w.walk, clamp(a.run * 1.3, 0, 1), 12, dt); w.cast = damp(w.cast, casting ? 1 : 0, casting ? 16 : 7, dt);
-  if (casting && !HERO.castOn) { A.Cast.reset(); A.Cast.play(); }
-  HERO.castOn = casting;
-  const loco = 1 - w.cast * 0.85;
-  A.Idle.setEffectiveWeight((1 - w.walk) * loco); A.Walk.setEffectiveWeight(w.walk * loco); A.Cast.setEffectiveWeight(w.cast);
-  A.Walk.timeScale = 0.6 + a.run * 1.5;
-  HERO.mixer.update(dt);
-  // layered on top of the clips: claw twists, the tail sweep, flinch, kneel, floating while rewriting
-  const s = HERO.scene, B = HERO.bones; let spin = 0, twist = 0, lean = 0, drop = a.kneel * 0.75;
-  const at = p.atk;
-  if (at.step >= 0) {
-    const k = clamp(at.t / at.dur, 0, 1), e = k < 0.5 ? k * 2 : 1, out = 1 - clamp((k - 0.7) / 0.3, 0, 1);
-    if (at.step === 0) { twist = (-0.9 + e * 1.9) * out; lean = 0.3 * out; }
-    else if (at.step === 1) { twist = (0.9 - e * 1.9) * out; lean = 0.3 * out; }
-    else { spin = clamp(k * 1.25, 0, 1) * Math.PI * 2; lean = 0.2 * out; drop += 0.12 * out; }
-  }
-  s.rotation.y = spin; s.position.y = -drop * HERO.scale + a.rewrite * 0.5;
-  s.rotation.x = a.kneel * 0.35 - a.hurt * 0.12;
-  if (B.Chest) { q.setFromAxisAngle(ax, twist + a.headYaw * 0.25); B.Chest.quaternion.multiply(q); B.Chest.rotateX(lean); }
-  if (B.Head) { q.setFromAxisAngle(ax, clamp(a.headYaw, -1, 1) * 0.5); B.Head.quaternion.multiply(q); }
-  if (at.step >= 0 && at.step < 2) { const arm = at.step === 0 ? B.ArmR : B.ArmL, k = clamp(at.t / at.dur, 0, 1), sw = Math.sin(Math.min(1, k * 1.4) * Math.PI); if (arm) arm.rotateX(-1.5 * sw); }
-  if (HERO.mesh) HERO.mesh.material.color.setScalar(p.powerless ? 0.55 : 1);
+  const act = HERO.an.act, a = p.a, at = p.atk;
+  let want = '';
+  if (p.dead || p.kneel) want = 'Kneel';
+  else if (at.step >= 0) want = ['ClawR', 'ClawL', 'TailSpin'][at.step];
+  else if (p.hurtT > 0.12) want = 'Hit';
+  else if (p.beam.on) want = 'AimHold';
+  else if (p.burst.charging || p.burst.anim > 0 || p.tk.ent || a.rewrite > 0.3) want = 'Cast';
+  if (want && !act[want]) want = act.Cast ? 'Cast' : '';
+  if (at.step >= 0 && at.step !== lastStep && HERO.cur === want) HERO.cur = '';     // restart the clip on a repeated strike
+  lastStep = at.step;
+  overlay(want, want === 'Kneel' ? 0.4 : 0.08);
+  if (want && act[want] && at.step >= 0) act[want].timeScale = act[want].getClip().duration / Math.max(0.2, at.dur);
+  wWalk = damp(wWalk, clamp(a.run * 1.3, 0, 1), 12, dt); wOver = damp(wOver, want ? 1 : 0, 14, dt);
+  const loco = 1 - wOver * 0.9;
+  act.Idle.setEffectiveWeight((1 - wWalk) * loco); act.Walk.setEffectiveWeight(wWalk * loco); act.Walk.timeScale = 0.6 + a.run * 1.5;
+  HERO.an.mixer.update(dt);
+  const s = HERO.scene, B = HERO.bones;
+  s.position.y = a.rewrite * 0.5;
+  if (B.Head && !want) { q.setFromAxisAngle(ax, clamp(a.headYaw, -1, 1) * 0.5); B.Head.quaternion.multiply(q); }
+  if (HERO.mesh) for (const m of Array.isArray(HERO.mesh.material) ? HERO.mesh.material : [HERO.mesh.material]) if (m !== HERO.eyes && m.color) m.color.setScalar(p.powerless ? 0.55 : 1);
+  if (HERO.eyes) { HERO.eyes.emissive.setHex(p.powerless ? 0x555555 : 0xffa21a); HERO.eyes.emissiveIntensity = p.powerless ? 0.2 : 3 + a.rewrite * 12 + a.beam * 3 + Math.sin(t * 3) * 0.4; }
 }
 const hv = new T.Vector3();
 export function heroHand(side) { const b = HERO.bones[side === 'R' ? 'HandR' : 'HandL']; if (!b) return null; b.getWorldPosition(hv); return hv; }

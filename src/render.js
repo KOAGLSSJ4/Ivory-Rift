@@ -75,7 +75,7 @@ export function init(canvas) {
   buildWorld(sc);
   R.dragon = buildDragon(); sc.add(R.dragon.root);
   R.dragon.root.traverse((o) => { if (o.isMesh) o.userData.m0 = o.material; });
-  loadHero(R.dragon.root, () => { R.dragon.body.visible = false; });
+  if (loadHero(R.dragon.root)) R.dragon.body.visible = false;
   FX.init(sc, R);
 
   // ---- post-processing chain
@@ -318,7 +318,7 @@ export function frame(dt, rdt) {
   const F = G.flags, well = R.named.well, tower = R.named.tower, tree = R.named.tree;
   if (well) { const w = well.userData.water; w.visible = !!F.wellFlow; if (F.wellFlow) w.position.y = damp(w.position.y, 0.95, 1.5, dt); else w.position.y = 0.2; }
   if (tower) tower.userData.pivot.rotation.z = damp(tower.userData.pivot.rotation.z, -(F.towerLean || 0) * 0.5, 4, dt);
-  if (tree) tree.userData.bloom.visible = !!F.bloom;
+  if (tree) { tree.userData.bloom.visible = !!F.bloom; if (tree.userData.dead) tree.userData.dead.visible = !F.bloom; }
   R.dragon.root.visible = R.dragon.root.visible && !F.hidePlayer;
 
   FX.update(dt, rdt);

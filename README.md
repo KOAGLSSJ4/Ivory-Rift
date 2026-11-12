@@ -4,7 +4,8 @@ A browser action RPG prototype built by Claude Code from David's two white-armou
 This folder is a **working build parked on a feature branch**, not David OS context. It belongs in its own repository.
 
 ## Play
-Open `pale-sovereign.html` in a desktop browser. It is one self-contained file and runs offline.
+The game loads its 3D models from `assets/`, so it must be served over http: opening `index.html` by double-click will not work.
+Run `npx serve .` (or `python3 -m http.server`) in this folder and open the address it prints. Any static host works, including GitHub Pages.
 
 | Input | Power |
 | --- | --- |
@@ -23,9 +24,12 @@ Touch controls appear automatically on phones and tablets.
 `npm install && npm run build` regenerates `pale-sovereign.html` from `src/` and `template.html`.
 `test/play.mjs` drives the game headlessly through Playwright (see `test/helpers.js`).
 
+## Assets
+`assets/` holds the GPT-made GLB pack: nine rigged characters, buildings, props and world pieces. `src/assets.js` loads them,
+`src/actors.js` maps game entities and structures onto them, `src/hero.js` drives the dragon. If a model fails to load,
+the procedural version in `src/models.js` is used instead.
+
 ## Known limits
-- Vellum is `assets/IvoryDragon.glb` (rigged, with Idle, Walk and Cast clips), loaded by `src/hero.js`. Claw and tail
-  attacks have no clips yet: they are layered procedurally on the chest and arm bones.
-- Every other model (townsfolk, soldiers, the Reckoner, buildings, props) is still procedural, built in `src/models.js`.
-- Title art and Vellum's dialogue portrait are David's reference image, embedded as base64 (`art_*.b64`).
+- Still procedural: the ground, the canal, Vellum's nest, hangar shelving and stairs, string lights, and all effects.
+- Weapon and shield attachment angles on soldiers were set by eye and need checking in play.
 - Tested by scripted playthrough in headless Chromium. Not yet tuned by a human hand on real hardware.

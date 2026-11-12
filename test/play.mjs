@@ -6,7 +6,7 @@ const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-un
 const p = await b.newPage({ viewport: { width: +w, height: +h } });
 const errs = []; p.on('console', (m) => { if (m.type() === 'error' && !/ERR_FAILED|net::/.test(m.text())) errs.push(m.text()); }); p.on('pageerror', (e) => errs.push('PAGEERROR ' + e.message + '\n' + (e.stack || '').split('\n').slice(0, 4).join('\n')));
 await p.route('**/fonts.g*/**', (r) => r.abort());
-await p.goto('file://' + path.resolve('pale-sovereign.html') + '?q=0');
+await p.goto('http://localhost:8765/index.html?q=0');
 await p.waitForTimeout(1500);
 await p.evaluate(fs.readFileSync('test/helpers.js', 'utf8'));
 const res = await p.evaluate(`(async () => { ${body} })()`).catch((e) => 'EVAL ERROR ' + e.message);

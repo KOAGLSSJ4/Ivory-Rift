@@ -2,6 +2,7 @@
 import { M, TX } from './mats.js';
 import { rng, lerp, clamp } from './util.js';
 import { taperTube } from './dragon.js';
+import { modelView, poseModel, structModel } from './actors.js';
 const T = window.THREE;
 
 let G = null;
@@ -33,11 +34,18 @@ const CONT_COL = [0x9c3b2e, 0x2f5f7a, 0xb8862f, 0x4f6b46];
 export function buildStruct(s) {
   geos();
   const g = new T.Group();
+  if (structModel(g, s)) { EXTRA[s.kind] && EXTRA[s.kind](g, s); return g; }
   const B = BUILD[s.kind];
   if (B) B(g, s);
   return g;
 }
 
+// what the procedural version still adds on top of a model
+const EXTRA = {
+  well(g, s) { const water = mk(new T.CircleGeometry(1.35, 24), M.water, g, [s.x, 0.2, s.z], null, [-Math.PI / 2, 0, 0], false); water.visible = false; g.userData.water = water; g.userData.name = 'well'; },
+  hangar(g, s) { const fl = M.concrete.clone(); fl.color.setHex(0xa39c90); mk(G.plane, fl, g, [(s.x0 + s.x1) / 2, 0.03, (s.z0 + s.z1) / 2], [s.x1 - s.x0 - 2, 1, s.z1 - s.z0 - 2], null, false); },
+  canal(g, s) { },
+};
 const BUILD = {
   hangar(g, s) {
     const wall = corr(0xaab4ba, 5, 1), roofM = corr(0x8f9a9e, 6, 3);
@@ -385,6 +393,7 @@ function soldier(kind) {
 // ======================= ENTITIES =======================
 export function buildEntity(e) {
   geos();
+  const mv = modelView(e); if (mv) return mv;
   const v = { g: new T.Group(), kind: e.kind };
   const g = v.g;
   switch (e.kind) {
@@ -494,6 +503,7 @@ export function setFlash(v, on) {
 
 // per-frame animation of an entity's view from its simulation state
 export function poseEntity(v, e, t) {
+  if (v.model) { poseModel(v, e, t); return; }
   const g = v.g;
   switch (e.kind) {
     case 'npc': case 'tally': case 'lancer': case 'bailiff': {

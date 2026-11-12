@@ -11,6 +11,7 @@ import { UI } from './ui.js';
 import * as Story from './story.js';
 import { initAudio, play, beamSound, chargeSound, setMuted, A, music } from './audio.js';
 import { dist, clamp } from './util.js';
+import { loadAll } from './assets.js';
 
 const canvas = document.getElementById('view');
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } } };
@@ -18,8 +19,11 @@ const qs = new URLSearchParams(location.search);
 let paused = false, style = store.get('ps-style') === 'pixel' ? 'pixel' : 'real', last = 0, slowFrames = 0, booted = false;
 G.input = I;
 
-function boot() {
+async function boot() {
   if (qs.get('q') !== null) R.quality = +qs.get('q');
+  const bs = document.getElementById('btnStart'), bl = bs.textContent; bs.disabled = true;
+  await loadAll((k) => { bs.textContent = `Loading ${Math.round(k * 100)}%`; });
+  bs.textContent = bl; bs.disabled = false;
   try { initRender(canvas); } catch (e) { document.getElementById('title').querySelector('p').textContent = 'This game needs WebGL 2, which this browser or device did not provide.'; console.error(e); return; }
   initInput(canvas);
   UIm.initUI({

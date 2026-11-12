@@ -45,6 +45,7 @@ export const P = {                          // named places used by the story
   // ---- The dry canal and its two bridges
   voids.push({ x0: 64, z0: 6, x1: 69, z1: 41 }, { x0: 64, z0: 47, x1: 69, z1: 72 }, { x0: 64, z0: 76, x1: 69, z1: 90 });
   S('canal', { x0: 64, x1: 69, z0: 6, z1: 90, bridges: [[41, 47], [72, 76]] });
+  S('bridge', { x0: 63.2, z0: 41, x1: 69.8, z1: 47, ry: Math.PI / 2 }); S('bridge', { x0: 63.2, z0: 72, x1: 69.8, z1: 76, ry: Math.PI / 2 });
 
   // ---- The plaza and the well
   circ(P.well.x, P.well.z, 1.8, 1.2); S('well', { x: P.well.x, z: P.well.z });
