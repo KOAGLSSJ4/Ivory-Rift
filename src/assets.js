@@ -16,7 +16,7 @@ export async function loadAll(onProgress) {
       if (res && res.ok) buf = await res.arrayBuffer();
       else {   // hosts that only serve text: the same file, base64-encoded
         res = await fetch(`assets/${name}.glb.txt`); if (!res.ok) throw new Error(res.status);
-        buf = await (await fetch('data:application/octet-stream;base64,' + (await res.text()).trim())).arrayBuffer();
+        const bin = atob((await res.text()).trim()), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); buf = u8.buffer;
       }
       const gltf = await new Promise((ok, bad) => loader.parse(buf, '', ok, bad));
       let skinned = false;
