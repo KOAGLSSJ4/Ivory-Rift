@@ -20,7 +20,7 @@ export async function loadAll(onProgress) {
       }
       const gltf = await new Promise((ok, bad) => loader.parse(buf, '', ok, bad));
       let skinned = false;
-      gltf.scene.traverse((o) => { if (o.isSkinnedMesh) skinned = true; if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.isSkinnedMesh) o.frustumCulled = false; const m = o.material; if (m.map) m.map.anisotropy = 4; m.envMapIntensity = 0.7; } });
+      gltf.scene.traverse((o) => { if (o.isSkinnedMesh) skinned = true; if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.isSkinnedMesh) o.frustumCulled = false; const m = o.material; if (m.map) m.map.anisotropy = 8; m.envMapIntensity = 1.0; } });
       A[name] = { scene: gltf.scene, clips: gltf.animations, skinned };
     } catch (e) { console.warn('asset not loaded:', name, e && e.message); }
     done++; if (onProgress) onProgress(done / NAMES.length);

@@ -114,7 +114,7 @@ export function initMaterials() {
   M.eye = std({ color: 0x1a0d00, emissive: 0xffa21a, emissiveIntensity: 5, roughness: 0.3 });
   M.socket = std({ color: 0x3a2e24, roughness: 0.9 });
   // --- world
-  M.salt = std({ map: TX.salt, roughness: 0.95 });
+  M.salt = std({ map: TX.salt, roughness: 0.95, color: 0xb0a898 });
   M.concrete = std({ map: TX.concrete, roughness: 0.88 });
   M.paving = std({ map: TX.paving, roughness: 0.9 });
   M.canal = std({ color: 0x5c564e, roughness: 0.95, map: TX.grime });

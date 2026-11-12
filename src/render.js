@@ -21,14 +21,14 @@ export const R = {
 
 // ---------------- moods: light, sky and grade for each beat of the chapter ----------------
 const MOODS = {
-  morning: { sun: [0.62, 0.42, -0.45], sunCol: 0xffd0a0, sunI: 3.0, skyCol: 0x9db6d6, gndCol: 0x6a5440, hemiI: 0.8, fog: 0xcfb08e, fogD: 0.006, top: 0x4f7fb4, hor: 0xf6cfa0, exp: 1.0, bloom: 0.5, tint: [1.05, 1.0, 0.93], sat: 1.06, shafts: 1 },
-  noon:    { sun: [0.45, 0.7, -0.35], sunCol: 0xfff0dc, sunI: 3.1, skyCol: 0xa9c4e4, gndCol: 0x6f5f48, hemiI: 0.85, fog: 0xdccdb4, fogD: 0.006, top: 0x4a84c4, hor: 0xe8dcc4, exp: 1.0, bloom: 0.45, tint: [1.02, 1.0, 0.97], sat: 1.08, shafts: 0.5 },
-  tithe:   { sun: [0.5, 0.5, -0.4], sunCol: 0xe9e0ff, sunI: 2.3, skyCol: 0x8d86ad, gndCol: 0x2a2030, hemiI: 0.8, fog: 0x36294f, fogD: 0.0055, top: 0x0e0820, hor: 0x644688, exp: 1.0, bloom: 0.55, tint: [0.98, 0.97, 1.04], sat: 1.0, shafts: 0 },
-  boss:    { sun: [0.3, 0.55, -0.5], sunCol: 0xe4daff, sunI: 2.2, skyCol: 0x857ea8, gndCol: 0x221a28, hemiI: 0.75, fog: 0x2a1f40, fogD: 0.006, top: 0x090514, hor: 0x52386f, exp: 1.0, bloom: 0.6, tint: [0.98, 0.97, 1.04], sat: 1.0, shafts: 0 },
-  dusk:    { sun: [-0.7, 0.24, -0.3], sunCol: 0xff9a5a, sunI: 2.0, skyCol: 0x5a4a88, gndCol: 0x3a2a2a, hemiI: 0.9, fog: 0x4a3050, fogD: 0.012, top: 0x120a26, hor: 0xb8603f, exp: 1.05, bloom: 0.9, tint: [1.04, 0.95, 1.02], sat: 1.02, shafts: 0 },
-  gold:    { sun: [0.55, 0.36, -0.5], sunCol: 0xffe2a8, sunI: 3.6, skyCol: 0xb8cce6, gndCol: 0x806a48, hemiI: 0.95, fog: 0xf2d6a0, fogD: 0.0065, top: 0x5a90c8, hor: 0xffe4b0, exp: 1.08, bloom: 0.8, tint: [1.07, 1.02, 0.92], sat: 1.12, shafts: 1 },
-  grey:    { sun: [0.4, 0.5, -0.5], sunCol: 0xe6e2dc, sunI: 2.0, skyCol: 0x9aa6b4, gndCol: 0x6a6660, hemiI: 1.2, fog: 0xb4b8bc, fogD: 0.009, top: 0x7888a0, hor: 0xc8ccd0, exp: 0.98, bloom: 0.35, tint: [0.98, 1.0, 1.03], sat: 0.7, shafts: 0.3 },
-  empty:   { sun: [0.4, 0.5, -0.5], sunCol: 0xc8c4d8, sunI: 1.4, skyCol: 0x6a6a80, gndCol: 0x3a3a40, hemiI: 0.9, fog: 0x6a6a78, fogD: 0.014, top: 0x30303c, hor: 0x80808c, exp: 0.95, bloom: 0.3, tint: [0.96, 0.98, 1.05], sat: 0.25, shafts: 0 },
+  morning: { sun: [0.62, 0.42, -0.45], sunCol: 0xffe6c8, sunI: 2.5, skyCol: 0xc4d0e0, gndCol: 0xa09080, hemiI: 1.45, fog: 0xcfb08e, fogD: 0.0021, top: 0x4f7fb4, hor: 0xf6cfa0, exp: 1.0, bloom: 0.30, tint: [1.020, 1.000, 0.972], sat: 1.06, shafts: 1 },
+  noon:    { sun: [0.45, 0.7, -0.35], sunCol: 0xfff0dc, sunI: 3.1, skyCol: 0xa9c4e4, gndCol: 0x6f5f48, hemiI: 0.85, fog: 0xdccdb4, fogD: 0.0021, top: 0x4a84c4, hor: 0xe8dcc4, exp: 1.0, bloom: 0.27, tint: [1.008, 1.000, 0.988], sat: 1.08, shafts: 0.5 },
+  tithe:   { sun: [0.5, 0.5, -0.4], sunCol: 0xe9e0ff, sunI: 2.3, skyCol: 0x8d86ad, gndCol: 0x2a2030, hemiI: 0.8, fog: 0x36294f, fogD: 0.0019, top: 0x0e0820, hor: 0x644688, exp: 1.0, bloom: 0.33, tint: [0.992, 0.988, 1.016], sat: 1.0, shafts: 0 },
+  boss:    { sun: [0.3, 0.55, -0.5], sunCol: 0xe4daff, sunI: 2.2, skyCol: 0x857ea8, gndCol: 0x221a28, hemiI: 0.75, fog: 0x2a1f40, fogD: 0.0021, top: 0x090514, hor: 0x52386f, exp: 1.0, bloom: 0.36, tint: [0.992, 0.988, 1.016], sat: 1.0, shafts: 0 },
+  dusk:    { sun: [-0.7, 0.24, -0.3], sunCol: 0xff9a5a, sunI: 2.0, skyCol: 0x5a4a88, gndCol: 0x3a2a2a, hemiI: 0.9, fog: 0x4a3050, fogD: 0.0042, top: 0x120a26, hor: 0xb8603f, exp: 1.05, bloom: 0.54, tint: [1.016, 0.980, 1.008], sat: 1.02, shafts: 0 },
+  gold:    { sun: [0.55, 0.36, -0.5], sunCol: 0xffe2a8, sunI: 3.6, skyCol: 0xb8cce6, gndCol: 0x806a48, hemiI: 0.95, fog: 0xf2d6a0, fogD: 0.0023, top: 0x5a90c8, hor: 0xffe4b0, exp: 1.08, bloom: 0.48, tint: [1.028, 1.008, 0.968], sat: 1.12, shafts: 1 },
+  grey:    { sun: [0.4, 0.5, -0.5], sunCol: 0xe6e2dc, sunI: 2.0, skyCol: 0x9aa6b4, gndCol: 0x6a6660, hemiI: 1.2, fog: 0xb4b8bc, fogD: 0.0031, top: 0x7888a0, hor: 0xc8ccd0, exp: 0.98, bloom: 0.21, tint: [0.992, 1.000, 1.012], sat: 0.7, shafts: 0.3 },
+  empty:   { sun: [0.4, 0.5, -0.5], sunCol: 0xc8c4d8, sunI: 1.4, skyCol: 0x6a6a80, gndCol: 0x3a3a40, hemiI: 0.9, fog: 0x6a6a78, fogD: 0.0049, top: 0x30303c, hor: 0x80808c, exp: 0.95, bloom: 0.18, tint: [0.984, 0.992, 1.020], sat: 0.25, shafts: 0 },
 };
 const WHITE = new T.Color(0xffffff), GREY = new T.Color(0x77706a);
 const cur = {}; let moodTo = MOODS.morning, moodFrom = null, moodT = 1, moodDur = 1, envDirty = true, envTimer = 0;
@@ -98,7 +98,7 @@ export function init(canvas) {
     float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }`;
   matFinal = SM(`varying vec2 vUv; uniform sampler2D tex, bloom; uniform float bloomK, exposure, sat, time, desat, flash, hurt, fade, vig; uniform vec3 tint; uniform vec2 res; ${COMMON}
     void main(){ vec2 d = vUv - .5; float r2 = dot(d, d);
-      vec2 ca = d * r2 * 0.012;
+      vec2 ca = vec2(0.);
       vec3 c = vec3(texture2D(tex, vUv + ca).r, texture2D(tex, vUv).g, texture2D(tex, vUv - ca).b);
       c += texture2D(bloom, vUv).rgb * bloomK;
       c *= exposure * tint;
@@ -106,15 +106,15 @@ export function init(canvas) {
       float l = dot(c, vec3(.2126, .7152, .0722));
       c = mix(vec3(l), c, sat * (1. - desat * 0.86));
       c = mix(c, c * vec3(1.05, 1.0, 0.9) + vec3(.02,.015,0.), desat * 0.5);
-      c = mix(c, smoothstep(0., 1., c), 0.25);                       // a touch of contrast
+      c = mix(c, smoothstep(0., 1., c), 0.12);                       // a touch of contrast
       c *= 1. - r2 * vig;                                           // vignette
       c += vec3(1., .12, .16) * hurt * r2 * 1.6;
       c = toSRGB(c);
-      c += (hash(vUv * res + time) - .5) * 0.035;                   // grain
+      c += (hash(vUv * res + time) - .5) * 0.008;                   // grain
       c = mix(c, vec3(1., .97, .9), flash);
       c *= 1. - fade;
       gl_FragColor = vec4(c, 1.); }`,
-    { tex: { value: null }, bloom: { value: null }, bloomK: { value: 0.6 }, exposure: { value: 1 }, sat: { value: 1 }, time: { value: 0 }, desat: { value: 0 }, flash: { value: 0 }, hurt: { value: 0 }, fade: { value: 0 }, vig: { value: 1.25 }, tint: { value: new T.Vector3(1, 1, 1) }, res: { value: new T.Vector2() } });
+    { tex: { value: null }, bloom: { value: null }, bloomK: { value: 0.6 }, exposure: { value: 1 }, sat: { value: 1 }, time: { value: 0 }, desat: { value: 0 }, flash: { value: 0 }, hurt: { value: 0 }, fade: { value: 0 }, vig: { value: 0.55 }, tint: { value: new T.Vector3(1, 1, 1) }, res: { value: new T.Vector2() } });
   matPixel = SM(`varying vec2 vUv; uniform sampler2D tex, depth; uniform vec2 res; uniform float exposure, sat, desat, flash, hurt, fade, levels; uniform vec3 tint; ${COMMON}
     float bayer(vec2 p){ vec2 q = floor(mod(p, 4.)); float i = q.x + q.y * 4.;
       float m = 0.; if (i < .5) m = 0.; else if (i < 1.5) m = 8.; else if (i < 2.5) m = 2.; else if (i < 3.5) m = 10.; else if (i < 4.5) m = 12.; else if (i < 5.5) m = 4.; else if (i < 6.5) m = 14.; else if (i < 7.5) m = 6.;
