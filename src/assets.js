@@ -12,8 +12,12 @@ export async function loadAll(onProgress) {
   const loader = new GLTFLoader(); let done = 0;
   const one = async (name) => {
     try {
-      const res = await fetch(`assets/${name}.glb`); if (!res.ok) throw new Error(res.status);
-      const buf = await res.arrayBuffer();
+      let buf, res = await fetch(`assets/${name}.glb`).catch(() => null);
+      if (res && res.ok) buf = await res.arrayBuffer();
+      else {   // hosts that only serve text: the same file, base64-encoded
+        res = await fetch(`assets/${name}.glb.txt`); if (!res.ok) throw new Error(res.status);
+        buf = await (await fetch('data:application/octet-stream;base64,' + (await res.text()).trim())).arrayBuffer();
+      }
       const gltf = await new Promise((ok, bad) => loader.parse(buf, '', ok, bad));
       let skinned = false;
       gltf.scene.traverse((o) => { if (o.isSkinnedMesh) skinned = true; if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.isSkinnedMesh) o.frustumCulled = false; const m = o.material; if (m.map) m.map.anisotropy = 4; m.envMapIntensity = 0.7; } });
